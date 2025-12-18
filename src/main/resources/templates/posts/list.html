@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+		xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+		layout:decorate="~{layout/layout}">
+<head>
+	<meta charset="UTF-8">
+	<title layout:fragment="title">Post List</title>
+</head>
+
+<main layout:fragment="content">
+	<h1>Post List</h1>
+	<h2>新規投稿</h2>
+	<a href="/posts/new" class="btn btn-primary mb-3">New Post</a>
+	<h2>掲示板一覧</h2>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th scope="co1" style="width: 30%;">Title</th>
+				<th scope="co1" style="width: 50%;">Content</th>
+				<th scope="co1" style="width: 20%;" class="text-end">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="post : ${posts}">
+				<td>
+					<a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}"></a>
+				</td>
+				<td>
+					<span th:text="${post.content}"></span>
+				</td>
+				<td class="text-end">
+					<a th:href="@{/posts/{id}/edit(id=${post.id})}" class="btn btn-primary btn-sm">Edit</a>
+					<form th:action="@{/posts/{id}/delete(id=${post.id})}" method="post" style="display: inline;">
+						<button type="submit" class="btn btn-danger btn-sm">Delete</button>
+					</form>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</main>	
+</html>

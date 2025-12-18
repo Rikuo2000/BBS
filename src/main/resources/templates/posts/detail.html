@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+		xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+		layout:decorate="~{layout/layout}">
+<head>
+	<meta charset="UTF-8">
+	<title layout:fragment="title">Post Detail</title>
+</head>
+<body>
+	<main layout:fragment="content">
+		<h1 th:text="${post.title}"></h1>
+		<p th:text="${post.content}"></p>
+		<a th:href="@{/posts}" class="btn btn-secondary">Back To List</a>
+		<a th:href="@{/posts/{id}/edit(id=${post.id})}" class="btn btn-primary">Edit</a>
+		<form th:action="@{/posts/{id}/delete(id=${post.id})}" method="post" style="display: inline;">
+			<button type="submit" class="btn btn-danger">Delete</button>
+		</form>
+	</main>
+</body>
+</html>
