@@ -2,13 +2,14 @@ package com.example.BBS.service;
 
 import java.util.ArrayList;
 
-import org.apache.catalina.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.BBS.model.User;
 import com.example.BBS.repository.UserRepository;
 
 @Service
@@ -32,9 +33,13 @@ public class CoustomUserDitailsService implements UserDetailsService{
 				);
 	}
 	
+	@Transactional
 	public void registerUser(User user) {
+		userRepository.findByUsername(user.getUsername()).ifPresent(u -> {
+			throw new IllegalArgumentException("ユーザー名が重複しています");
+        });
+
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		userRepository.save(user);
 	}
-
 }
