@@ -15,6 +15,15 @@
 		<form th:action="@{/posts/{id}/delete(id=${post.id})}" method="post" style="display: inline;">
 			<button type="submit" class="btn btn-danger">Delete</button>
 		</form>
+		<h2>Comments</h2>
+		<h3>Add a Comment</h3>
+		<form th:action="@{/comments/add}" method="post">
+			<input type="hidden" name="postId" th:value="${post.id}"/>
+			<div class="mb-3">
+				<textarea name="content" class="form-control" rows="3" placeholder="Write a comment..." required></textarea>
+			</div>
+			<button type="submit" class="btn btn-success">Add Comment</button>
+		</form>
 	</main>
 </body>
 </html>

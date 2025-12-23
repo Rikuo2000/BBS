@@ -9,15 +9,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.BBS.model.Post;
+import com.example.BBS.model.User;
+import com.example.BBS.service.CommentService;
 import com.example.BBS.service.PostService;
+import com.example.BBS.service.UserService;
 
 @Controller
 @RequestMapping("/posts")
 public class PostController {
+	private final CommentService commentService;
 	private final PostService postService;
+	private final UserService userService;
 	
-	public PostController(PostService postService) {
-		this.postService = postService;
+	public PostController(PostService postService, CommentService commentService, UserService userService) {
+		this.commentService = commentService;
+		this.postService 	= postService;
+		this.userService	= userService;
 	}
 	
 	@GetMapping
@@ -43,6 +50,9 @@ public class PostController {
 	//新規投稿
 	@PostMapping
 	public String createPost(@ModelAttribute Post post) {
+		//ログイン中のユーザー情報取得
+		User user = userService.getCurrentUser();
+		post.setUser(user);
 		postService.save(post);
 		return "redirect:/posts";
 	}

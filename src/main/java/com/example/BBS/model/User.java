@@ -1,16 +1,22 @@
 package com.example.BBS.model;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "users")
 public class User {
 	@Id
@@ -22,4 +28,10 @@ public class User {
 	
 	@Column(nullable = false)
 	private String password;
+	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<Post> posts;
+	
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<Comment> comments;
 }
