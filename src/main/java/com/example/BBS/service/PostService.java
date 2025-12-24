@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.example.BBS.model.Post;
+import com.example.BBS.model.User;
 import com.example.BBS.repository.PostRepository;
 
 @Service
@@ -33,5 +34,13 @@ public class PostService {
 	public void deleteById(Long id) {
 		postRepository.deleteById(id);
 	}
-
+	public boolean verifyOwnership(Post post, User user) {
+		if (post.getUser() == null) {
+			return false;
+		}
+		if (!post.getUser().getId().equals(user.getId())) {
+			return false;
+		}
+		return true;
+	}
 }

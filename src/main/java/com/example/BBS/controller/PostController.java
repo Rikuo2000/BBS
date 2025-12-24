@@ -29,14 +29,19 @@ public class PostController {
 	
 	@GetMapping
 	public String listPosts(Model model) {
+		User loggedUser = userService.getCurrentUser();
 		model.addAttribute("posts", postService.findAll());
+		model.addAttribute("loggedInUserId", loggedUser.getId());
 		return "posts/list";
 	}
 	
 	//投稿の詳細表示
 	@GetMapping("/{id}")
 	public String viewPost(@PathVariable Long id, Model model){
+		User loggedUser = userService.getCurrentUser();
 		model.addAttribute("post", postService.findById(id).orElseThrow());
+		model.addAttribute("comments", commentService.findByPostId(id));
+		model.addAttribute("loggedInUserId", loggedUser.getId());
 		return "posts/detail";
 	}
 	//新規投稿画面
@@ -60,14 +65,23 @@ public class PostController {
 	//編集画面
 	@GetMapping("/{id}/edit")
 	public String editPostForm(@PathVariable Long id, Model model){
-		model.addAttribute("post", postService.findById(id).orElseThrow());
+		User loggedUser = userService.getCurrentUser();
+		Post post 		= postService.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
+		if (!postService.verifyOwnership(post, loggedUser)) {
+			return "redirect:/posts?error=notAuthorized";
+		}
+		model.addAttribute("post", post);
 		return "posts/edit";
 	}
 	
 	//投稿更新
 	@PostMapping("/{id}")
 	public String updatePost(@PathVariable Long id, @ModelAttribute Post post) {
+		User loggedUser = userService.getCurrentUser();
 		Post existingPost = postService.findById(id).orElseThrow();
+		if (!postService.verifyOwnership(existingPost, loggedUser)) {
+			return "redirect:/posts?error=notAuthorized";
+		}
 		existingPost.setTitle(post.getTitle());
 		existingPost.setContent(post.getContent());
 		postService.save(existingPost);
@@ -75,8 +89,13 @@ public class PostController {
 	}
 	
 	//投稿削除
-	@PostMapping("{id}/delete")
+	@PostMapping("/{id}/delete")
 	public String deletePost(@PathVariable Long id) {
+		User loggedUser = userService.getCurrentUser();
+		Post post 		= postService.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
+		if (!postService.verifyOwnership(post, loggedUser)) {
+			return "redirect:/posts?error=notAuthorized";
+		}
 		postService.deleteById(id);
 		return "redirect:/posts";
 	}

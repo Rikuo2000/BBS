@@ -1,6 +1,7 @@
 package com.example.BBS.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,10 +43,15 @@ public class CommentController {
 	
 	//削除
 	@PostMapping("/{id}/delete")
-	public String deleteComment(@RequestParam Long id, @RequestParam Long postId) {
+	public String deleteComment(@PathVariable Long id, @RequestParam Long postId) {
+		//ログインユーザー取得
+		User loggedInUser = userService.getCurrentUser();
 		Comment comment = commentService.findById(id).orElseThrow(
-				() -> new RuntimeException("Comment not forund"));
-		
+				() -> new RuntimeException("Comment not found"));
+		//投稿の所有者確認
+		if (!commentService.verifyOwnership(comment, loggedInUser)) {
+			return "redirect:/posts/" + postId + "?error=notAuthorized";
+		}
 		commentService.deleteById(id);
 		return "redirect:/posts/" + postId;
 	}

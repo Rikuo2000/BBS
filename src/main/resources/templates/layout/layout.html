@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="https://www.thymeleaf.org/thymleaf-extras-springsecurity6"
+	xmlns:sec="https://www.thymeleaf.org/extras/springsecurity6"
 		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
 	<meta charset="UTF-8">
@@ -12,22 +12,34 @@
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 			<div class="container-fluid">
-				<a class="navbar-brand" href="#">掲示板アプリ</a>
+				<!--ログイン中は投稿一覧へ(/posts)-->
+				<a class="navbar-brand" th:href="@{/posts}" sec:authorize="isAuthenticated()">
+				    掲示板アプリ
+				</a>
+				<!--未ログインはトップページへ(/)-->
+				<a class="navbar-brand" th:href="@{/}" sec:authorize="isAnonymous()">
+				    掲示板アプリ
+				</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-						<li class="nav-item">
-							<a class="nav-link active" aria-current="page" href="/">Home</a>
+						<!--ログイン中-->
+						<li class="nav-item" sec:authorize="isAuthenticated()">
+							<a class="nav-link active" aria-current="page" th:href="@{/posts}">Home</a>
 						</li>
+						<!--未ログイン-->
 						<li class="nav-item" sec:authorize="isAnonymous()">
+							<a class="nav-link active" aria-current="page" th:href="@{/}">Home</a>
+						</li>
+						<li class="nav-item" sec:authorize="isAnonymous()"><!--未ログイン-->
 							<a class="nav-link active" aria-current="page" href="/auth/login">Login</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link active" aria-current="page" href="/auth/register">Register</a>
 						</li>
-						<li class="nav-item" sec:authorize="isAuthenticated()">
+						<li class="nav-item" sec:authorize="isAuthenticated()"><!--ログイン中-->
 							<form action="/auth/logout" method="post" >
 								<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 								<button type="submit" class="nav-link active">Logout</button>
