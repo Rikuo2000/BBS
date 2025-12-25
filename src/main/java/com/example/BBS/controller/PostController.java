@@ -34,13 +34,15 @@ public class PostController {
 	@GetMapping
 	public String listPosts(
 			@RequestParam(value = "keyword", required = false) String keyword,
-	        @RequestParam(value = "matchType", required = false) String matchType,
+	        @RequestParam(value = "matchType", required = false, defaultValue = "contains") String matchType,
+	        @RequestParam(value = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
+	        @RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
 			Model model) {
 		List<Post> posts;
 		if (keyword != null && !keyword.isEmpty() && matchType != null && !matchType.isEmpty()) {
-			posts = postService.searchPosts(keyword, matchType);
+			posts = postService.searchPosts(keyword, matchType, sortBy, sortOrder);
 		}else {
-			posts = postService.findAll();
+			posts = postService.findAll(sortBy, sortOrder);
 		}
 		User loggedUser = userService.getCurrentUser();
 		model.addAttribute("posts", posts);

@@ -11,7 +11,7 @@
 	<h1>Post List</h1>
 	<h2>新規投稿</h2>
 	<a th:href="@{/posts/new}" class="btn btn-primary mb-3">New Post</a>
-	
+	<!--検索・ソート-->
 	<form th:action="@{/posts}" method="get" class="mb-3">
 		<div class="row">
 			<div class="col-md-6">
@@ -22,6 +22,18 @@
 					<option value="contains" th:selected="${param.matchType?.toString() == 'contains'}">部分一致</option>
 					<option value="startswith" th:selected="${param.matchType?.toString() == 'startswith'}">前方一致</option>
 					<option value="endswith" th:selected="${param.matchType?.toString() == 'endswith'}">後方一致</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<select name="sortBy" class="form-control">
+					<option value="createdAt" th:selected="${param.sortBy?.toString() == 'createdAt'}">作成日</option>
+					<option value="title" th:selected="${param.sortBy?.toString() == 'title'}">タイトル</option>
+				</select>
+			</div>
+			<div class="col-md-2">
+				<select name="sortOrder" class="form-control">
+					<option value="asc" th:selected="${param.sortOrder?.toString() == 'asc'}">昇順</option>
+					<option value="desc" th:selected="${param.sortOrder?.toString() == 'desc'}">降順</option>
 				</select>
 			</div>
 			<div class="col-md-2">

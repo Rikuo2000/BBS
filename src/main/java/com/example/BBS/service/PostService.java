@@ -3,6 +3,7 @@ package com.example.BBS.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.BBS.model.Post;
@@ -22,19 +23,38 @@ public class PostService {
 		return postRepository.save(post);
 	}
 	
-	public List<Post> findAll() {
-		return postRepository.findAll();
+	public List<Post> findAll(String sortBy, String sortOrder) {
+		Sort.Order order;
+		if (sortOrder.equals("asc")){
+			order = new Sort.Order(Sort.Direction.ASC, sortBy);
+		}else {
+
+			order = new Sort.Order(Sort.Direction.DESC, sortBy);
+		}
+		Sort sort = Sort.by(order);
+		return postRepository.findAll(sort);
 	}
 	
-	public List<Post> searchPosts(String keyword, String matchType) {
+	public List<Post> searchPosts(String keyword, String matchType, String sortBy, String sortOrder) {
+		Sort.Order order;
+		if (sortOrder.equals("asc")){
+			order = new Sort.Order(Sort.Direction.ASC, sortBy);
+		}else {
+
+			order = new Sort.Order(Sort.Direction.DESC, sortBy);
+		}
+
+		Sort sort = Sort.by(order);
+		
+		
 		switch (matchType) {
 		case "startswith":
-			return postRepository.findByTitleStartingWithOrContentStartingWith(keyword, keyword);
+			return postRepository.findByTitleStartingWithOrContentStartingWith(keyword, keyword, sort);
 		case "endswith":
-			return postRepository.findByTitleEndingWithOrContentEndingWith(keyword, keyword);
+			return postRepository.findByTitleEndingWithOrContentEndingWith(keyword, keyword, sort);
 		case "contains":
 			default:
-				return postRepository.findByTitleContainingOrContentContaining(keyword, keyword);
+				return postRepository.findByTitleContainingOrContentContaining(keyword, keyword, sort);
 		}
 	}
 	
