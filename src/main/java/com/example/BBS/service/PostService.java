@@ -1,8 +1,10 @@
 package com.example.BBS.service;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +25,7 @@ public class PostService {
 		return postRepository.save(post);
 	}
 	
-	public List<Post> findAll(String sortBy, String sortOrder) {
+	public Page<Post> findAll(String sortBy, String sortOrder, int page, int size) {
 		Sort.Order order;
 		if (sortOrder.equals("asc")){
 			order = new Sort.Order(Sort.Direction.ASC, sortBy);
@@ -31,11 +33,15 @@ public class PostService {
 
 			order = new Sort.Order(Sort.Direction.DESC, sortBy);
 		}
+
 		Sort sort = Sort.by(order);
-		return postRepository.findAll(sort);
+		
+		Pageable pageable = PageRequest.of(page, size, sort);
+		
+		return postRepository.findAll(pageable);
 	}
 	
-	public List<Post> searchPosts(String keyword, String matchType, String sortBy, String sortOrder) {
+	public Page<Post> searchPosts(String keyword, String matchType, String sortBy, String sortOrder, int page, int size) {
 		Sort.Order order;
 		if (sortOrder.equals("asc")){
 			order = new Sort.Order(Sort.Direction.ASC, sortBy);
@@ -45,16 +51,18 @@ public class PostService {
 		}
 
 		Sort sort = Sort.by(order);
+		
+		Pageable pageable = PageRequest.of(page, size, sort);
 		
 		
 		switch (matchType) {
 		case "startswith":
-			return postRepository.findByTitleStartingWithOrContentStartingWith(keyword, keyword, sort);
+			return postRepository.findByTitleStartingWithOrContentStartingWith(keyword, keyword, pageable);
 		case "endswith":
-			return postRepository.findByTitleEndingWithOrContentEndingWith(keyword, keyword, sort);
+			return postRepository.findByTitleEndingWithOrContentEndingWith(keyword, keyword, pageable);
 		case "contains":
 			default:
-				return postRepository.findByTitleContainingOrContentContaining(keyword, keyword, sort);
+				return postRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
 		}
 	}
 	

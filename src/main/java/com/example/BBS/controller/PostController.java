@@ -1,7 +1,6 @@
 package com.example.BBS.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,12 +36,14 @@ public class PostController {
 	        @RequestParam(value = "matchType", required = false, defaultValue = "contains") String matchType,
 	        @RequestParam(value = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
 	        @RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
-			Model model) {
-		List<Post> posts;
+			@RequestParam(value = "page", required = false, defaultValue = "0")int page,
+	        Model model) {
+		Page<Post> posts;
+		int size = 10;	//表示サイズ
 		if (keyword != null && !keyword.isEmpty() && matchType != null && !matchType.isEmpty()) {
-			posts = postService.searchPosts(keyword, matchType, sortBy, sortOrder);
+			posts = postService.searchPosts(keyword, matchType, sortBy, sortOrder, page, size);
 		}else {
-			posts = postService.findAll(sortBy, sortOrder);
+			posts = postService.findAll(sortBy, sortOrder, page, size);
 		}
 		User loggedUser = userService.getCurrentUser();
 		model.addAttribute("posts", posts);
