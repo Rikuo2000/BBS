@@ -26,6 +26,18 @@ public class PostService {
 		return postRepository.findAll();
 	}
 	
+	public List<Post> searchPosts(String keyword, String matchType) {
+		switch (matchType) {
+		case "startswith":
+			return postRepository.findByTitleStartingWithOrContentStartingWith(keyword, keyword);
+		case "endswith":
+			return postRepository.findByTitleEndingWithOrContentEndingWith(keyword, keyword);
+		case "contains":
+			default:
+				return postRepository.findByTitleContainingOrContentContaining(keyword, keyword);
+		}
+	}
+	
 	public Optional<Post> findById(Long id) {
 		return postRepository.findById(id);
 	}
@@ -34,6 +46,7 @@ public class PostService {
 	public void deleteById(Long id) {
 		postRepository.deleteById(id);
 	}
+	
 	public boolean verifyOwnership(Post post, User user) {
 		if (post.getUser() == null) {
 			return false;

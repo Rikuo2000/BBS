@@ -1,5 +1,7 @@
 package com.example.BBS.controller;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.BBS.model.Post;
 import com.example.BBS.model.User;
@@ -27,11 +30,22 @@ public class PostController {
 		this.userService	= userService;
 	}
 	
+	//投稿一覧表示
 	@GetMapping
-	public String listPosts(Model model) {
+	public String listPosts(
+			@RequestParam(value = "keyword", required = false) String keyword,
+	        @RequestParam(value = "matchType", required = false) String matchType,
+			Model model) {
+		List<Post> posts;
+		if (keyword != null && !keyword.isEmpty() && matchType != null && !matchType.isEmpty()) {
+			posts = postService.searchPosts(keyword, matchType);
+		}else {
+			posts = postService.findAll();
+		}
 		User loggedUser = userService.getCurrentUser();
-		model.addAttribute("posts", postService.findAll());
+		model.addAttribute("posts", posts);
 		model.addAttribute("loggedInUserId", loggedUser.getId());
+		
 		return "posts/list";
 	}
 	
