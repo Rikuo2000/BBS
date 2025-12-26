@@ -3,6 +3,7 @@ package com.example.BBS.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -39,6 +40,9 @@ public class Post {
 	
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Comment> comments = new ArrayList<>();
+	
+	@OneToMany(mappedBy = "post")
+	private Set<Like> likes;
 	
 	@PrePersist
 	public void onCreate() {

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-		xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+		xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 		layout:decorate="~{layout/layout}">
 <head>
 	<meta charset="UTF-8">
@@ -18,6 +18,12 @@
 				<button type="submit" class="btn btn-danger">Delete</button>
 			</form>
 		</span>
+		<form th:action="@{/posts/{id}/like(id=${post.id})}" method="post">
+			<button type="submit" th:class="${isLiked ? 'btn btn-danger' : 'btn btn-outline-danger'}">
+				<i th:class="${isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'}"></i>
+			</button>
+		</form>
+		<p><span th:text="${likeCount}"></span>件のいいね</p>
 		<div class="mb-3">
 			<div th:each="comment : ${post.comments}">
 				<div class="card mb-3">

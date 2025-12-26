@@ -1,6 +1,7 @@
 package com.example.BBS.model;
 
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -34,4 +35,7 @@ public class User {
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Comment> comments;
+	
+	@OneToMany(mappedBy = "user")
+	private Set<Like> likes;
 }

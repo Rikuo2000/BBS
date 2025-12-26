@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.BBS.model.Post;
 import com.example.BBS.model.User;
 import com.example.BBS.service.CommentService;
+import com.example.BBS.service.LikeService;
 import com.example.BBS.service.PostService;
 import com.example.BBS.service.UserService;
 
@@ -20,11 +21,13 @@ import com.example.BBS.service.UserService;
 @RequestMapping("/posts")
 public class PostController {
 	private final CommentService commentService;
+	private final LikeService likeService;
 	private final PostService postService;
 	private final UserService userService;
 	
-	public PostController(PostService postService, CommentService commentService, UserService userService) {
+	public PostController(PostService postService, LikeService likeService, CommentService commentService, UserService userService) {
 		this.commentService = commentService;
+		this.likeService	= likeService;
 		this.postService 	= postService;
 		this.userService	= userService;
 	}
@@ -56,9 +59,15 @@ public class PostController {
 	@GetMapping("/{id}")
 	public String viewPost(@PathVariable Long id, Model model){
 		User loggedUser = userService.getCurrentUser();
-		model.addAttribute("post", postService.findById(id).orElseThrow());
+		Post post = postService.findById(id).orElseThrow();
+		model.addAttribute("post", post);
 		model.addAttribute("comments", commentService.findByPostId(id));
 		model.addAttribute("loggedInUserId", loggedUser.getId());
+		
+		boolean isLiked = likeService.isLikedByUser(post, loggedUser);
+		model.addAttribute("isLiked", isLiked);
+		int likeCount = likeService.countLikesForPost(post);
+		model.addAttribute("likeCount", likeCount);
 		return "posts/detail";
 	}
 	//新規投稿画面
