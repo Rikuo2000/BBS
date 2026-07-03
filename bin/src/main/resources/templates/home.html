@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html layout:decorate="layout/layout"
+	xmlns:sec="https://www.thymeleaf.org/thymleaf-extras-springsecurity6">
+<head>
+	<meta charset="UTF-8">
+	<title layout:fragment="title">Home</title>
+</head>
+<body>
+	<main layout:fragment="content">
+		<h1 class="text-center">掲示板アプリへようこそ</h1>
+		<div class="text-center">
+			<a href="/auth/login" class="btn btn-primary" sec:authorize="isAnonymous()">LOGIN</a>
+			<a href="/auth/register" class="btn btn-secondary" sec:authorize="isAuthenticated()">REGISTER</a>
+		</div>
+	</main>
+</body>
+</html>
