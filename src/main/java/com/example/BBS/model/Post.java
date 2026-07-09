@@ -31,11 +31,11 @@ public class Post {
 	private String title;
 	private String content;
 	
-	private LocalDateTime createdAt = LocalDateTime.now();
-	private LocalDateTime updatedAt = LocalDateTime.now();
+	private LocalDateTime createdAt;
+	private LocalDateTime updatedAt;
 	
 	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = true)
+	@JoinColumn(name = "user_id")
 	private User user;
 	
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -46,7 +46,9 @@ public class Post {
 	
 	@PrePersist
 	public void onCreate() {
-		createdAt = LocalDateTime.now();
+		var now = LocalDateTime.now();
+		createdAt = now;
+		updatedAt = now;
 	}
 	
 	@PreUpdate

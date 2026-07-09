@@ -11,7 +11,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		http.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/", "/auth/register", "/auth/login")
+				.requestMatchers("/", "/auth/register", "/auth/login", "/contact/**")
 				.permitAll().anyRequest().authenticated()
 				).formLogin(form -> form
 						.loginPage("/auth/login")
@@ -27,7 +27,7 @@ public class SecurityConfig {
 								);
 		return http.build();
 	}
-	
+
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
