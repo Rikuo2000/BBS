@@ -85,7 +85,7 @@ public class PostController {
 
 	//新規投稿
 	@PostMapping
-	public String createPost(@Valid @ModelAttribute PostForm postForm, BindingResult result, Model model) {
+	public String createPost(@Valid @ModelAttribute("post") PostForm postForm, BindingResult result, Model model) {
 		//バリテーションエラーがある場合は、エラー情報を含めたフォーム画面へ戻す
 		if (result.hasErrors()) {
 			model.addAttribute("post", postForm);
