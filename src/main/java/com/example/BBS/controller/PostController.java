@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.BBS.dto.CommentForm;
 import com.example.BBS.dto.PostForm;
@@ -89,9 +90,11 @@ public class PostController {
 
 	//新規投稿
 	@PostMapping
-	public String createPost(@Valid @ModelAttribute("post") PostForm postForm, BindingResult result, Model model) {
+	public String createPost(@Valid @ModelAttribute("post") PostForm postForm, BindingResult result,
+			RedirectAttributes redirectAttributes, Model model) {
 		//バリテーションエラーがある場合は、エラー情報を含めたフォーム画面へ戻す
 		if (result.hasErrors()) {
+			model.addAttribute("errorMessage", "掲示板の投稿に失敗しました");
 			model.addAttribute("post", postForm);
 			return "posts/new";
 		}
@@ -103,6 +106,9 @@ public class PostController {
 		post.setTitle(postForm.getTitle());
 		post.setContent(postForm.getContent());
 		post.setUser(user);
+
+		//フラッシュメッセージをセット
+		redirectAttributes.addFlashAttribute("successMessage", "掲示板の投稿に成功しました");
 
 		postService.save(post);
 		return "redirect:/posts";
@@ -122,27 +128,35 @@ public class PostController {
 
 	//投稿更新
 	@PostMapping("/{id}")
-	public String updatePost(@PathVariable Long id, @ModelAttribute Post post) {
+	public String updatePost(@PathVariable Long id, @ModelAttribute Post post, RedirectAttributes redirectAttributes) {
 		User loggedUser = userService.getCurrentUser();
 		Post existingPost = postService.findById(id).orElseThrow();
 		if (!postService.verifyOwnership(existingPost, loggedUser)) {
+			//フラッシュメッセージをセット
+			redirectAttributes.addFlashAttribute("errorMessage", "掲示板の削除に失敗しました");
 			return "redirect:/posts?error=notAuthorized";
 		}
 		existingPost.setTitle(post.getTitle());
 		existingPost.setContent(post.getContent());
 		postService.save(existingPost);
+		//フラッシュメッセージをセット
+		redirectAttributes.addFlashAttribute("successMessage", "掲示板の更新に成功しました");
 		return "redirect:/posts";
 	}
 
 	//投稿削除
 	@PostMapping("/{id}/delete")
-	public String deletePost(@PathVariable Long id) {
+	public String deletePost(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 		User loggedUser = userService.getCurrentUser();
 		Post post = postService.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
 		if (!postService.verifyOwnership(post, loggedUser)) {
+			//フラッシュメッセージをセット
+			redirectAttributes.addFlashAttribute("errorMessage", "掲示板の削除に失敗しました");
 			return "redirect:/posts?error=notAuthorized";
 		}
 		postService.deleteById(id);
+		//フラッシュメッセージをセット
+		redirectAttributes.addFlashAttribute("successMessage", "掲示板の削除に成功しました");
 		return "redirect:/posts";
 	}
 }

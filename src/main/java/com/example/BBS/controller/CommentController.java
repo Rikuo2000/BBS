@@ -35,11 +35,13 @@ public class CommentController {
 	//投稿
 	@PostMapping("/add")
 	public String addComment(@RequestParam Long postId, @Valid @ModelAttribute("commentForm") CommentForm commentForm,
-			BindingResult result, RedirectAttributes ra) {
+			BindingResult result, RedirectAttributes redirectAttributes) {
 		//
 		if (result.hasErrors()) {
-			ra.addFlashAttribute("org.springframework.validation.BindingResult.commentForm", result);
-			ra.addFlashAttribute("commentForm", commentForm);
+			redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.commentForm", result);
+			redirectAttributes.addFlashAttribute("commentForm", commentForm);
+			//フラッシュメッセージをセット
+			redirectAttributes.addFlashAttribute("errorMessage", "コメントの投稿に失敗しました");
 			return "redirect:/posts/" + postId;
 		}
 
@@ -52,21 +54,28 @@ public class CommentController {
 		comment.setContent(commentForm.getContent());
 
 		commentService.save(comment);
+		//フラッシュメッセージをセット
+		redirectAttributes.addFlashAttribute("successMessage", "コメントの投稿に成功しました");
 		return "redirect:/posts/" + postId;
 	}
 
 	//削除
 	@PostMapping("/{id}/delete")
-	public String deleteComment(@PathVariable Long id, @RequestParam Long postId) {
+	public String deleteComment(@PathVariable Long id, @RequestParam Long postId,
+			RedirectAttributes redirectAttributes) {
 		//ログインユーザー取得
 		User loggedInUser = userService.getCurrentUser();
 		Comment comment = commentService.findById(id).orElseThrow(
 				() -> new RuntimeException("Comment not found"));
 		//投稿の所有者確認
 		if (!commentService.verifyOwnership(comment, loggedInUser)) {
+			//フラッシュメッセージをセット
+			redirectAttributes.addFlashAttribute("errorMessage", "コメントの削除に失敗しました");
 			return "redirect:/posts/" + postId + "?error=notAuthorized";
 		}
 		commentService.deleteById(id);
+		//フラッシュメッセージをセット
+		redirectAttributes.addFlashAttribute("successMessage", "コメントの削除に成功しました");
 		return "redirect:/posts/" + postId;
 	}
 
