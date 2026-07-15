@@ -10,12 +10,12 @@ import lombok.Setter;
 @Setter
 public class PostForm {
 
-	@NotBlank(message = "入力は必須です")
-	@Size(max = 100, message = "文字数は100文字までにしてください")
+	@NotBlank(message = "{error.post.title.blunk}")
+	@Size(max = 100, message = "{error.post.title.size}")
 	private String title;
 
-	@NotBlank(message = "入力は必須です")
-	@Size(max = 1000, message = "文字数は1000文字までにしてください")
+	@NotBlank(message = "{error.post.content.blunk}")
+	@Size(max = 1000, message = "{error.post.content.size}")
 	private String content;
 
 }

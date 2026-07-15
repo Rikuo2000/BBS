@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.BBS.dto.CommentForm;
 import com.example.BBS.dto.PostForm;
 import com.example.BBS.model.Post;
 import com.example.BBS.model.User;
@@ -65,9 +66,12 @@ public class PostController {
 	public String viewPost(@PathVariable Long id, Model model) {
 		User loggedUser = userService.getCurrentUser();
 		Post post = postService.findById(id).orElseThrow();
+		model.addAttribute("loggedInUserId", loggedUser.getId());
 		model.addAttribute("post", post);
 		model.addAttribute("comments", commentService.findByPostId(id));
-		model.addAttribute("loggedInUserId", loggedUser.getId());
+		if (!model.containsAttribute("commentForm")) {
+			model.addAttribute("commentForm", new CommentForm());
+		}
 
 		boolean isLiked = likeService.isLikedByUser(post, loggedUser);
 		model.addAttribute("isLiked", isLiked);
