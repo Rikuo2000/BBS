@@ -133,7 +133,7 @@ public class PostController {
 		Post existingPost = postService.findById(id).orElseThrow();
 		if (!postService.verifyOwnership(existingPost, loggedUser)) {
 			//フラッシュメッセージをセット
-			redirectAttributes.addFlashAttribute("errorMessage", "掲示板の削除に失敗しました");
+			redirectAttributes.addFlashAttribute("errorMessage", "掲示板の更新に失敗しました");
 			return "redirect:/posts?error=notAuthorized";
 		}
 		existingPost.setTitle(post.getTitle());

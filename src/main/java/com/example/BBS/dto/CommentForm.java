@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class CommentForm {
 	@NotBlank(message = "{error.content.content.blunk}")
-	@Size(max = 1000, message = "{error.content.content.size}")
+	@Size(max = 100, message = "{error.content.content.size}")
 	private String content;
 
 }
