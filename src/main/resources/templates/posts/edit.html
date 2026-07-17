@@ -4,22 +4,22 @@
 		layout:decorate="~{layout/layout}">
 <head>
 	<meta charset="UTF-8">
-	<title layout:fragment="title">Edit Post</title>
+	<title layout:fragment="title" th:text="#{post.edit}">Edit Post</title>
 </head>
 <body>
 	<main layout:fragment="content">
-		<h1>New Post</h1>
+		<h1 th:text="#{post.edit}">Edit Post</h1>
 		<form th:action="@{/posts/{id}(id=${post.id})}" method="post">
 			<div class="mt-3">
-				<label for="title" class="form-label">Title</label>
+				<label for="title" class="form-label" th:text="#{post.title}">Title</label>
 				<input type="text" id="title" name="title" class="form-control" th:field="${post.title}">
 			</div>
 			<div class="mt-3">
-				<label for="content" class="form-label">Content</label>
+				<label for="content" class="form-label" th:text="#{post.content}">Content</label>
 				<textarea id="content" name="content" class="form-control" rows="5" th:field="${post.content}"></textarea>
 			</div>
-			<button type="submit" class="btn btn-success">update</button>
-			<a th:href="@{/posts/{id}(id=${post.id})}" class="btn btn-secondary">Cancel</a>
+			<button type="submit" class="btn btn-success" th:text="#{post.update}">update</button>
+			<a th:href="@{/posts/{id}(id=${post.id})}" class="btn btn-secondary" th:text="#{post.cancel}">Cancel</a>
 		</form>
 	</main>	
 </body>

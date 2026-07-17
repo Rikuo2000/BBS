@@ -10,11 +10,11 @@ import lombok.Setter;
 @Setter
 public class PostForm {
 
-	@NotBlank(message = "{error.post.title.blunk}")
+	@NotBlank(message = "{error.post.title.blank}")
 	@Size(max = 100, message = "{error.post.title.size}")
 	private String title;
 
-	@NotBlank(message = "{error.post.content.blunk}")
+	@NotBlank(message = "{error.post.content.blank}")
 	@Size(max = 1000, message = "{error.post.content.size}")
 	private String content;
 
