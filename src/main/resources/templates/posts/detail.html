@@ -19,12 +19,11 @@
 				<button type="submit" class="btn btn-danger">Delete</button>
 			</form>
 		</span>
-		<form th:action="@{/posts/{id}/like(id=${post.id})}" method="post">
-			<button type="submit" th:class="${isLiked ? 'btn btn-danger' : 'btn btn-outline-danger'}">
-				<i th:class="${isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'}"></i>
-			</button>
-		</form>
-		<p><span th:text="${likeCount}"></span>件のいいね</p>
+		<button id="like-button" type="submit" th:class="${isLiked ? 'btn btn-danger' : 'btn btn-outline-danger'}"
+			th:data-post-id="${post.id}">
+			<i id="like-icon" th:class="${isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'}"></i>
+		</button>
+		<p><span id="like-count" th:text="${likeCount}"></span>件のいいね</p>
 		<div class="mb-3">
 			<div th:each="comment : ${comments}">
 				<div class="card mb-3">
@@ -61,6 +60,54 @@
 			</div>
 			<button type="submit" class="btn btn-success">Add Comment</button>
 		</form>
+		<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				const likeButton = document.getElementById("like-button");
+				const likeIcon = document.getElementById("like-icon");
+				const likeCount = document.getElementById("like-count");
+
+				const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
+				const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+
+				console.log(csrfToken);
+				console.log(csrfHeader);
+
+				likeButton.addEventListener("click", function () {
+					const postId = likeButton.getAttribute("data-post-id");
+					fetch(`/posts/${postId}/like`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+
+							[csrfHeader]: csrfToken
+						},
+					})
+						.then(response => response.json())
+						.then(data => {
+							console.log(data);
+							if (data.error) {
+								alert(data.error);
+								return;
+							}
+
+							if (data.isLiked) {
+								likeButton.classList.remove("btn-outline-danger")
+								likeIcon.classList.remove("bi-heart")
+								likeButton.classList.add("btn-danger")
+								likeIcon.classList.add("bi-heart-fill")
+							} else {
+								likeButton.classList.remove("btn-danger")
+								likeIcon.classList.remove("bi-heart-fill")
+								likeButton.classList.add("btn-outline-danger")
+								likeIcon.classList.add("bi-heart")
+							}
+
+							likeCount.textContent = data.likeCount;
+						})
+						.catch(error => console.error("Error", error));
+				});
+			});
+		</script>
 	</main>
 </body>
 
