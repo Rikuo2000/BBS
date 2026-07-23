@@ -1,17 +1,24 @@
 <!DOCTYPE html>
-<html layout:decorate="layout/layout"
-	xmlns:sec="https://www.thymeleaf.org/thymleaf-extras-springsecurity6">
+<html layout:decorate="layout/layout" xmlns:sec="https://www.thymeleaf.org/thymleaf-extras-springsecurity6">
+
 <head>
 	<meta charset="UTF-8">
 	<title layout:fragment="title" th:text="#{common.title}">Home</title>
 </head>
+
 <body>
 	<main layout:fragment="content">
-		<h1 class="text-center" th:text="#{home.welcome}">掲示板アプリへようこそ</h1>
+		<h1 class="text-center mb-4" th:text="#{home.welcome}">掲示板アプリへようこそ</h1>
 		<div class="text-center">
-			<a href="/auth/login" class="btn btn-primary" sec:authorize="isAnonymous()" th:text="#{common.login}">LOGIN</a>
-			<a href="/auth/register" class="btn btn-secondary" sec:authorize="isAnonymous()" th:text="#{common.register}">REGISTER</a>
+			<a th:href="@{/auth/login}" class="btn btn-primary" sec:authorize="isAnonymous()"
+				th:text="#{common.login}">LOGIN</a>
+			<a th:href="@{/auth/register}" class="btn btn-secondary" sec:authorize="isAnonymous()"
+				th:text="#{common.register}">REGISTER</a>
+		</div>
+		<div class="text-center" sec:authorize="isAuthenticated()">
+			<a th:href="@{/posts}" class="btn btn-primary" th:text="#{post.list.title}">掲示板一覧へ</a>
 		</div>
 	</main>
 </body>
+
 </html>
