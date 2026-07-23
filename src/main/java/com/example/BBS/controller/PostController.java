@@ -84,7 +84,7 @@ public class PostController {
 	//新規投稿画面
 	@GetMapping("/new")
 	public String newPostForm(Model model) {
-		model.addAttribute("post", new Post());
+		model.addAttribute("post", new PostForm());
 		return "posts/new";
 	}
 
@@ -122,22 +122,35 @@ public class PostController {
 		if (!postService.verifyOwnership(post, loggedUser)) {
 			return "redirect:/posts?error=notAuthorized";
 		}
-		model.addAttribute("post", post);
+		PostForm postForm = new PostForm();
+
+		postForm.setTitle(post.getTitle());
+		postForm.setContent(post.getContent());
+
+		model.addAttribute("postId", id);
+		model.addAttribute("post", postForm);
 		return "posts/edit";
 	}
 
 	//投稿更新
 	@PostMapping("/{id}")
-	public String updatePost(@PathVariable Long id, @ModelAttribute Post post, RedirectAttributes redirectAttributes) {
+	public String updatePost(@PathVariable Long id, @Valid @ModelAttribute("post") PostForm postForm,
+			BindingResult result,
+			RedirectAttributes redirectAttributes, Model model) {
+		if (result.hasErrors()) {
+			model.addAttribute("postId", id);
+			model.addAttribute("errorMessage", "掲示板の更新に失敗しました");
+			return "posts/edit";
+		}
+
 		User loggedUser = userService.getCurrentUser();
 		Post existingPost = postService.findById(id).orElseThrow();
 		if (!postService.verifyOwnership(existingPost, loggedUser)) {
-			//フラッシュメッセージをセット
 			redirectAttributes.addFlashAttribute("errorMessage", "掲示板の更新に失敗しました");
 			return "redirect:/posts?error=notAuthorized";
 		}
-		existingPost.setTitle(post.getTitle());
-		existingPost.setContent(post.getContent());
+		existingPost.setTitle(postForm.getTitle());
+		existingPost.setContent(postForm.getContent());
 		postService.save(existingPost);
 		//フラッシュメッセージをセット
 		redirectAttributes.addFlashAttribute("successMessage", "掲示板の更新に成功しました");
