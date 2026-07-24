@@ -45,17 +45,31 @@ public class PostController {
 			@RequestParam(value = "keyword", required = false) String keyword,
 			@RequestParam(value = "matchType", required = false, defaultValue = "contains") String matchType,
 			@RequestParam(value = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
-			@RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
+			@RequestParam(value = "sortOrder", required = false, defaultValue = "desc") String sortOrder,
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			Model model) {
 		Page<Post> posts;
-		int size = 10; //表示サイズ
-		if (keyword != null && !keyword.isEmpty() && matchType != null && !matchType.isEmpty()) {
-			posts = postService.searchPosts(keyword, matchType, sortBy, sortOrder, page, size);
+		final int size = 10; //表示サイズ
+		boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+
+		if (hasKeyword) {
+			posts = postService.searchPosts(
+					keyword,
+					matchType,
+					sortBy,
+					sortOrder,
+					page,
+					size);
 		} else {
-			posts = postService.findAll(sortBy, sortOrder, page, size);
+			posts = postService.findAll(
+					sortBy,
+					sortOrder,
+					page,
+					size);
 		}
+
 		User loggedUser = userService.getCurrentUser();
+
 		model.addAttribute("posts", posts);
 		model.addAttribute("loggedInUserId", loggedUser.getId());
 
