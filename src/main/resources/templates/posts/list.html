@@ -5,6 +5,21 @@
 <head>
 	<meta charset="UTF-8">
 	<title layout:fragment="title" th:text="#{post.list.title}">Post List</title>
+	<style>
+		.ellipsis-cell {
+			max-width: 0;
+			overflow: hidden;
+		}
+
+		.ellipsis-cell a,
+		.ellipsis-cell span {
+			display: block;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+	</style>
+
 </head>
 
 <body>
@@ -32,15 +47,18 @@
 					<select name="sortBy" class="form-control">
 						<option value="createdAt" th:selected="${param.sortBy?.toString() == 'createdAt'}"
 							th:text="#{search.sort.createdAt}">作成日</option>
-						<option value="title" th:selected="${param.sortBy?.toString() == 'title'}" th:text="#{post.title}">タイトル
+						<option value="title" th:selected="${param.sortBy?.toString() == 'title'}"
+							th:text="#{post.title}">タイトル
 						</option>
 					</select>
 				</div>
 				<div class="col-md-2">
 					<select name="sortOrder" class="form-control">
-						<option value="asc" th:selected="${param.sortOrder?.toString() == 'asc'}" th:text="#{search.order.asc}">昇順
+						<option value="asc" th:selected="${param.sortOrder?.toString() == 'asc'}"
+							th:text="#{search.order.asc}">昇順
 						</option>
-						<option value="desc" th:selected="${param.sortOrder?.toString() == 'desc'}" th:text="#{search.order.desc}">降順
+						<option value="desc" th:selected="${param.sortOrder?.toString() == 'desc'}"
+							th:text="#{search.order.desc}">降順
 						</option>
 					</select>
 				</div>
@@ -51,7 +69,8 @@
 		</form>
 
 		<h2 th:text="#{post.board.list}">掲示板一覧</h2>
-		<table class="table table-striped">
+
+		<table class="table table-striped" style="table-layout: fixed;">
 			<thead>
 				<tr>
 					<th scope="col" style="width: 30%;" th:text="#{post.title}">Title</th>
@@ -61,10 +80,10 @@
 			</thead>
 			<tbody>
 				<tr th:each="post : ${posts}">
-					<td>
+					<td class="ellipsis-cell">
 						<a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}"></a>
 					</td>
-					<td>
+					<td class="ellipsis-cell">
 						<span th:text="${post.content}"></span>
 					</td>
 					<td class="text-end">
@@ -73,7 +92,8 @@
 								th:text="#{common.edit}">Edit</a>
 							<form th:action="@{/posts/{id}/delete(id=${post.id})}" method="post"
 								style="display: inline;">
-								<button type="submit" class="btn btn-danger btn-sm" th:text="#{common.delete}">Delete</button>
+								<button type="submit" class="btn btn-danger btn-sm"
+									th:text="#{common.delete}">Delete</button>
 							</form>
 						</div>
 					</td>
