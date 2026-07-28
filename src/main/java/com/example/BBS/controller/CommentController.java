@@ -2,6 +2,8 @@ package com.example.BBS.controller;
 
 import jakarta.validation.Valid;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,11 +27,14 @@ public class CommentController {
 	private final CommentService commentService;
 	private final PostService postService;
 	private final UserService userService;
+	private final MessageSource messageSource;
 
-	public CommentController(CommentService commentService, PostService postService, UserService userService) {
+	public CommentController(CommentService commentService, PostService postService, UserService userService,
+			MessageSource messageSource) {
 		this.commentService = commentService;
 		this.postService = postService;
 		this.userService = userService;
+		this.messageSource = messageSource;
 	}
 
 	//投稿
@@ -41,7 +46,8 @@ public class CommentController {
 			redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.commentForm", result);
 			redirectAttributes.addFlashAttribute("commentForm", commentForm);
 			//フラッシュメッセージをセット
-			redirectAttributes.addFlashAttribute("errorMessage", "コメントの投稿に失敗しました");
+			redirectAttributes.addFlashAttribute("errorMessage",
+					messageSource.getMessage("comment.create.failed", null, LocaleContextHolder.getLocale()));
 			return "redirect:/posts/" + postId;
 		}
 
@@ -55,7 +61,8 @@ public class CommentController {
 
 		commentService.save(comment);
 		//フラッシュメッセージをセット
-		redirectAttributes.addFlashAttribute("successMessage", "コメントの投稿に成功しました");
+		redirectAttributes.addFlashAttribute("successMessage",
+				messageSource.getMessage("comment.create.success", null, LocaleContextHolder.getLocale()));
 		return "redirect:/posts/" + postId;
 	}
 
@@ -70,12 +77,14 @@ public class CommentController {
 		//投稿の所有者確認
 		if (!commentService.verifyOwnership(comment, loggedInUser)) {
 			//フラッシュメッセージをセット
-			redirectAttributes.addFlashAttribute("errorMessage", "コメントの削除に失敗しました");
+			redirectAttributes.addFlashAttribute("errorMessage",
+					messageSource.getMessage("comment.delete.failed", null, LocaleContextHolder.getLocale()));
 			return "redirect:/posts/" + postId + "?error=notAuthorized";
 		}
 		commentService.deleteById(id);
 		//フラッシュメッセージをセット
-		redirectAttributes.addFlashAttribute("successMessage", "コメントの削除に成功しました");
+		redirectAttributes.addFlashAttribute("successMessage",
+				messageSource.getMessage("comment.delete.success", null, LocaleContextHolder.getLocale()));
 		return "redirect:/posts/" + postId;
 	}
 
