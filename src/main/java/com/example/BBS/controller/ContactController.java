@@ -1,13 +1,18 @@
 package com.example.BBS.controller;
 
+import jakarta.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import com.example.BBS.dto.ContactForm;
 import com.example.BBS.model.ContactData;
 import com.example.BBS.service.EmailService;
 
@@ -23,20 +28,23 @@ public class ContactController {
 	}
 
 	@GetMapping
-	public String contctForm(Model model) {
-		if (!model.containsAttribute("contactData")) {
-			model.addAttribute("contactData", new ContactData());
+	public String contactForm(Model model) {
+		if (!model.containsAttribute("contactForm")) {
+			model.addAttribute("contactForm", new ContactForm());
 		}
 		return "contact/form";
 	}
 
 	@PostMapping("/confirm")
-	public String confirmContact(
-			@RequestParam("name") String name,
-			@RequestParam("email") String email,
-			@RequestParam("message") String message,
+	public String confirmContactForm(@Valid @ModelAttribute("contactForm") ContactForm contactForm,
+			BindingResult result,
 			Model model) {
-		model.addAttribute("contactData", new ContactData(name, email, message));
+		//バリテーションエラーがある場合は、エラー情報を含めたフォーム画面へ戻す
+		if (result.hasErrors()) {
+			return "contact/form";
+		}
+		model.addAttribute("contactData",
+				new ContactData(contactForm.getName(), contactForm.getEmail(), contactForm.getMessage()));
 		return "contact/confirm";
 	}
 
